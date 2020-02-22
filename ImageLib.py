@@ -10,6 +10,9 @@ from io import BytesIO
 Image.MAX_IMAGE_PIXELS = 1000000000
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+CONNEXION_TIMEOUT = 5
+TOTAL_DOWNLOAD_TIMEOUT = 120
+
 
 async def resize(img, size):
     # Preserve aspect ratio
@@ -34,7 +37,8 @@ async def resize(img, size):
 
 async def dl_image(link):
     try:
-        async with aiohttp.ClientSession() as session:
+        timeout = aiohttp.ClientTimeout(connect=CONNEXION_TIMEOUT, total=TOTAL_DOWNLOAD_TIMEOUT)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
             async with session.get(link) as resp:
                 if resp.status == 200:
                     return await resp.read()
