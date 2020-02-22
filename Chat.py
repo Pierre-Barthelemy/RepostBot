@@ -200,8 +200,13 @@ class Chat:
         sorted_x = sorted(self.User.items(), key=operator.itemgetter(1), reverse=True)
         text = "Top user by number of repost\n"
         for x in sorted_x:
-            user_data = await self.Client.fetch_user(x[0])
-            text += "{} have made {} repost\n".format(user_data.name, x[1])
+            try:
+                user_data = await self.Client.fetch_user(x[0])
+                text += "{} have made {} repost\n".format(user_data.name, x[1])
+            except discord.NotFound:
+                text += "{} (can't found) made {} repost\n".format(x[0], x[1])
+            except discord.HTTPException:
+                self.Logger.error("HTTPException")
         self.Logger.info(text)
         text = "```" + text + "```"
         await self.send_message(text=text)
