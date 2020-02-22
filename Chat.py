@@ -154,7 +154,7 @@ class Chat:
 
         await self.edit_message(tmp, text='You have {} messages.'.format(counter))
         await asyncio.sleep(5)
-        self.Client.delete_message(tmp)
+        tmp.delete()
 
     async def count_old(self, message_limit=log_len):
         """
@@ -176,7 +176,7 @@ class Chat:
         self.Logger.info("Channel {} : count".format(self.Channel))
         tmp = await self.send_message(text='There is {} messages.'.format(self.Message))
         await asyncio.sleep(5)
-        self.Client.delete_message(tmp)
+        tmp.delete()
 
     async def clean(self, message_limit=log_len):
         """
@@ -188,7 +188,7 @@ class Chat:
         self.Logger.info("Channel {} : clean limit = {}".format(self.Channel, message_limit))
         async for log in self.Channel.history(limit=message_limit):
             if log.author == self.Client.user:
-                await self.Client.delete_message(log)
+                await log.delete()
         self.Logger.debug("Channel {} : end clean".format(self.Channel))
 
     async def user(self):
@@ -200,7 +200,7 @@ class Chat:
         sorted_x = sorted(self.User.items(), key=operator.itemgetter(1), reverse=True)
         text = "Top user by number of repost\n"
         for x in sorted_x:
-            user_data = await self.Client.get_user_info(x[0])
+            user_data = await self.Client.fetch_user(x[0])
             text += "{} have made {} repost\n".format(user_data.name, x[1])
         self.Logger.info(text)
         text = "```" + text + "```"
@@ -351,7 +351,7 @@ class Chat:
                 await self.reaction_number(self.Data[link])
                 if time.time() - self.Data[link].first_post() <= two_week:
                     await self.Channel.send(message.channel, file=repost_img)
-                    await self.Client.add_reaction(message, self.Emoji)  # \U0001F44D
+                    await message.add_reaction(self.Emoji)  # \U0001F44D
             elif not (link in self.Data):
                 self.Logger.debug("New link {} {}\n".format(link, message.author))
                 self.Data[link] = Link(0, message.author, time.time())
@@ -361,7 +361,7 @@ class Chat:
                     image_hash, author = await ImageLib.image_hash(link, message.author)
                     if await self.add_in_tree(image_hash, author):
                         await self.Channel.send(message.channel, repost_img)
-                        await self.Client.add_reaction(message, self.Emoji)
+                        await message.add_reaction(self.Emoji)
                 except discord.DiscordException:
                     self.Logger.warning("Channel {} : Link {} is dead".format(self.Channel, link))
 
