@@ -16,6 +16,8 @@ repost_img = "repost.jpg"
 emoji_name = "nik"
 # Default log length who will be used to scan or clean
 log_len = sys.maxsize
+# Website witch not trigger repost
+whitelist = ["https://tenor.com"]
 
 
 class Chat:
@@ -348,6 +350,7 @@ class Chat:
         urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',
                           message.content)
         self.Logger.debug("Channel {} : new message have {} link\n".format(self.Channel, len(urls)))
+        urls = (x for x in urls if self.test_start(x, whitelist))
         for link in urls:
             if link in self.Data and self.Data[link].author() != message.author:
                 self.Logger.debug("not same author {} {}\n".format(self.Data[link].author, message.author))
@@ -355,7 +358,7 @@ class Chat:
                 self.Data[link].add_one()
                 await self.reaction_number(self.Data[link])
                 if time.time() - self.Data[link].first_post() <= two_week:
-                    await self.Channel.send(message.channel, file=repost_img)
+                    await self.Channel.send(file=discord.File(repost_img))
                     await message.add_reaction(self.Emoji)  # \U0001F44D
             elif not (link in self.Data):
                 self.Logger.debug("New link {} {}\n".format(link, message.author))
