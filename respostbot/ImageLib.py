@@ -1,11 +1,11 @@
-import image
+import re
+from io import BytesIO
+
+import aiohttp
+import respostbot.image as image
 import numpy
 import PIL
-import re
-from PIL import Image
-from PIL import ImageFile
-import aiohttp
-from io import BytesIO
+from PIL import Image, ImageFile
 
 Image.MAX_IMAGE_PIXELS = 1000000000
 ImageFile.LOAD_TRUNCATED_IMAGES = True

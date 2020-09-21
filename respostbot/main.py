@@ -1,7 +1,9 @@
-from multiprocessing import Pool
-import discord
 import logging
-import Chat
+from multiprocessing import Pool
+
+import respostbot.Chat as Chat
+import discord
+
 # import asyncio
 """
 Todo:

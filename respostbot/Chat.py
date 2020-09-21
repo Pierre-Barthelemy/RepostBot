@@ -1,13 +1,14 @@
-import re
 import asyncio
-from urllib.parse import urlparse
 import operator
-import discord
+import re
 import sys
 import time
-from link import Link
-import BinaryThree
-import ImageLib
+from urllib.parse import urlparse
+
+import respostbot.BinaryThree as BinaryThree
+import discord
+import respostbot.ImageLib as ImageLib
+from respostbot.link import Link
 
 two_week = 12096000
 # Pic used to post after a repost

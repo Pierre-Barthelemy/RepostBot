@@ -1,4 +1,5 @@
 from image_match.goldberg import ImageSignature
+
 gis = ImageSignature()
 
 
